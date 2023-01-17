@@ -16,29 +16,19 @@
 package com.fleetcortechnologiesoperatingcompanyllcprogram3.it.tests;
 
 import com.adobe.cq.testing.client.CQClient;
-import com.adobe.cq.testing.junit.assertion.CQAssert;
-import com.adobe.cq.testing.junit.rules.CQAuthorClassRule;
 import com.adobe.cq.testing.junit.rules.CQAuthorPublishClassRule;
 import com.adobe.cq.testing.junit.rules.CQRule;
-import com.adobe.cq.testing.junit.rules.Page;
-
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
-import org.eclipse.jetty.client.HttpResponse;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.slf4j.LoggerFactory;
-
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.apache.commons.io.IOUtils.closeQuietly;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,10 +36,13 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Validates pages on publish and makes sure that the page renders completely and also
  * validates all linked resources (images, clientlibs etc).
- * 
  */
 public class PublishPageValidationIT {
 
@@ -59,7 +52,6 @@ public class PublishPageValidationIT {
 
     // list files which do return a zerobyte response body
     private static final List<String> ZEROBYTEFILES = Arrays.asList();
-
 
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(PublishPageValidationIT.class);
@@ -84,18 +76,17 @@ public class PublishPageValidationIT {
     }
 
 
-
     @Test
     @Ignore
     public void validateHomepage() throws ClientException, IOException, URISyntaxException {
         String path = HOMEPAGE;
         verifyPage(adminPublish, path);
-        verifyLinkedResources(adminPublish,path);
+        verifyLinkedResources(adminPublish, path);
 
     }
 
 
-    private static void verifyPage (HtmlUnitClient client, String path) throws ClientProtocolException, IOException {
+    private static void verifyPage(HtmlUnitClient client, String path) throws ClientProtocolException, IOException {
         URI baseURI = client.getUrl();
         LOG.info("Using {} as baseURL", baseURI.toString());
         HttpGet get = new HttpGet(baseURI.toString() + path);
@@ -108,14 +99,14 @@ public class PublishPageValidationIT {
 
         List<URI> references = client.getResourceRefs(path);
         assertTrue(path + " does not contain any references!", references.size() > 0);
-        for (URI ref : references ) {
+        for (URI ref : references) {
             if (isSameOrigin(client.getUrl(), ref)) {
                 LOG.info("verifying linked resource {}", ref.toString());
                 SlingHttpResponse response = client.doGet(ref.getRawPath());
                 int statusCode = response.getStatusLine().getStatusCode();
                 int responseSize = response.getContent().length();
                 assertEquals("Unexpected status returned from [" + ref + "]", 200, statusCode);
-                if (! ZEROBYTEFILES.stream().anyMatch(s -> ref.getPath().startsWith(s))) {
+                if (!ZEROBYTEFILES.stream().anyMatch(s -> ref.getPath().startsWith(s))) {
                     if (responseSize == 0) {
                         LOG.warn("Empty response body from [" + ref.getPath() + "], please validate if this is correct");
                     }
@@ -127,7 +118,8 @@ public class PublishPageValidationIT {
         }
     }
 
-    /** Checks if two URIs have the same origin.
+    /**
+     * Checks if two URIs have the same origin.
      *
      * @param uri1 first URI
      * @param uri2 second URI
