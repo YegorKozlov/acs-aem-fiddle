@@ -36,7 +36,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -71,8 +70,8 @@ public class PublishPageValidationIT {
     }
 
     @AfterClass
-    public static void afterClass() {
-        closeQuietly(adminPublish);
+    public static void afterClass() throws IOException {
+        adminPublish.close();
     }
 
 
