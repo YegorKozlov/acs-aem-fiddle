@@ -45,9 +45,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import static org.apache.sling.api.servlets.HttpConstants.METHOD_POST;
+
 @Component(service = Servlet.class, immediate = true, property = {
         "sling.servlet.resourceTypes=" + "acs-tools/components/aemfiddle",
-        "sling.servlet.methods=" + "POST",
+        "sling.servlet.methods=" + METHOD_POST,
         "sling.servlet.selectors=" + "run",
         "sling.servlet.extensions=" + "html",
 })
