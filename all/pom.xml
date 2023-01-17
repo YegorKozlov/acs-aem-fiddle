@@ -77,7 +77,7 @@
                             <type>zip</type>
                             <target>/apps/fleetcortechnologiesoperatingcompanyllcprogram3-packages/application/install</target>
                         </embedded>
-                    </embeddeds>
+                     </embeddeds>
                 </configuration>
             </plugin>
             <plugin>
@@ -196,6 +196,13 @@
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>com.adobe.acs</groupId>
+            <artifactId>acs-aem-commons-content</artifactId>
+            <version>5.4.0</version>
+            <type>zip</type>
+        </dependency>
+
 
     </dependencies>
 </project>
