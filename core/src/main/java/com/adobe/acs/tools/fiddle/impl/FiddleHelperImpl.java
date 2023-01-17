@@ -30,8 +30,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-import static com.day.cq.security.util.RequestConstants.ENCODING_UTF_8;
+import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
+import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
 
 @Component
 public class FiddleHelperImpl implements FiddleHelper {
@@ -54,12 +56,12 @@ public class FiddleHelperImpl implements FiddleHelper {
 
     public static InputStream getNTFileAsInputStream(Resource resource) throws RepositoryException {
         Node node = resource.adaptTo(Node.class);
-        Node jcrContent = node.getNode("jcr:content");
-        return jcrContent.getProperty("jcr:data").getBinary().getStream();
+        Node jcrContent = node.getNode(JCR_CONTENT);
+        return jcrContent.getProperty(JCR_DATA).getBinary().getStream();
     }
 
     public static String getNTFileAsString(Resource resource) throws RepositoryException, IOException {
         InputStream inputStream = getNTFileAsInputStream(resource);
-        return IOUtils.toString(inputStream, ENCODING_UTF_8);
+        return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
     }
 }

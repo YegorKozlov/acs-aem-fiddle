@@ -24,10 +24,8 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
-import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
@@ -53,7 +51,7 @@ import java.util.Iterator;
         "sling.servlet.selectors=" + "run",
         "sling.servlet.extensions=" + "html",
 })
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "findsecbugs:PATH_TRAVERSAL_IN"})
 public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 
@@ -70,10 +68,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private File fileRoot;
 
     @Reference
-    private FiddleRefresher fiddleRefresher;
-
-    @Reference
-    private SlingSettingsService slingSettingsService;
+    private transient FiddleRefresher fiddleRefresher;
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -118,12 +113,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         if (path == null || "".equals(path)) {
             return request.getResource();
         } else {
-            Resource resource = request.getResourceResolver().resolve(path);
-            if (resource != null) {
-                return resource;
-            } else {
-                return request.getResource();
-            }
+            return request.getResourceResolver().resolve(path);
         }
     }
 
@@ -149,7 +139,8 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             for (String fileName : COMPILED_JSP_FILES) {
                 File file = new File(fileRoot, fileName);
                 if (file.exists()) {
-                    file.delete();
+                    boolean status = file.delete();
+                    log.debug("delete: {} {}", status, file.getPath());
                 }
             }
         }
@@ -165,7 +156,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
                     node.remove();
                     node.getSession().save();
                 } catch (RepositoryException e) {
-                    log.error("Could not remove compiled AEM Fiddle scripts: {}", e);
+                    log.error("Could not remove compiled AEM Fiddle scripts", e);
                 }
             }
         }
@@ -190,7 +181,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         // this is less than ideal, but there's no better way to get to the fs classloader's data directory
         for (Bundle bundle : bundleContext.getBundles()) {
             if (bundle.getSymbolicName().equals("org.apache.sling.commons.fsclassloader")) {
-                this.fileRoot = new File(slingSettingsService.getSlingHomePath(), "launchpad/felix/bundle" + bundle.getBundleId() + "/data/classes");
+                this.fileRoot = bundle.getDataFile("classes");
                 break;
             }
         }

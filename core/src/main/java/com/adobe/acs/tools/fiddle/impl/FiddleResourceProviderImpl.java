@@ -19,8 +19,6 @@
  */
 package com.adobe.acs.tools.fiddle.impl;
 
-import com.adobe.granite.license.ProductInfo;
-import com.adobe.granite.license.ProductInfoService;
 import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -61,9 +59,6 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
 
     @Reference
     private EventAdmin eventAdmin;
-
-    @Reference
-    private ProductInfoService productInfoService;
 
     private volatile ServiceRegistration resourceProviderRegistration = null;
     private volatile ServiceRegistration legacyResourceProviderRegistration = null;
@@ -117,25 +112,14 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
 
     @Activate
     protected void activate(final BundleContext context) {
-        final Dictionary<String, Object> props = new Hashtable<String, Object>();
+        final Dictionary<String, Object> props = new Hashtable<>();
 
-        final ProductInfo[] productInfos = productInfoService.getInfos();
-        if (productInfos.length > 0) {
-            final Version actualVersion = productInfos[0].getVersion();
+        // Is >= 6.3.0, use new Resource Provider
+        props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
+        props.put(ResourceProvider.PROPERTY_ROOT, ROOT);
+        props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
+        resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
 
-            if (actualVersion.compareTo(AEM_63_VERSION) < 0) {
-                // AEM 6.2 Support - Legacy Sling Resource Provider Implementation
-                props.put(org.apache.sling.api.resource.ResourceProvider.ROOTS, ROOT);
-                legacyResourceProviderRegistration =
-                        context.registerService(org.apache.sling.api.resource.ResourceProvider.class.getName(), this, props);
-            } else {
-                // Is >= 6.3.0, use new Resource Provider
-                props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
-                props.put(ResourceProvider.PROPERTY_ROOT, ROOT);
-                props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
-                resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
-            }
-        }
     }
 
     @Deactivate
