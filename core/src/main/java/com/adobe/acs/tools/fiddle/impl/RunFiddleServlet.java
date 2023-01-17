@@ -53,7 +53,7 @@ import static org.apache.sling.api.servlets.HttpConstants.METHOD_POST;
         "sling.servlet.selectors=" + "run",
         "sling.servlet.extensions=" + "html",
 })
-@SuppressWarnings({"serial", "findsecbugs:PATH_TRAVERSAL_IN"})
+@SuppressWarnings({"serial", "findsecbugs:PATH_TRAVERSAL_IN", "CQRules:CQBP-71"})
 public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 

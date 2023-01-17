@@ -49,8 +49,6 @@ import java.util.List;
 public class FiddleResourceProviderImpl extends ResourceProvider<Object> implements FiddleRefresher {
     private static final Logger log = LoggerFactory.getLogger(FiddleResourceProviderImpl.class);
 
-    private static final String ROOT = "/apps/acs-tools/components/aemfiddle/fiddle";
-
     @Reference
     private EventAdmin eventAdmin;
 
@@ -99,7 +97,7 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
         final Dictionary<String, Object> props = new Hashtable<>();
 
         props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
-        props.put(ResourceProvider.PROPERTY_ROOT, ROOT);
+        props.put(ResourceProvider.PROPERTY_ROOT, Constants.PSEDUO_COMPONENT_PATH);
         props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
         resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
 
