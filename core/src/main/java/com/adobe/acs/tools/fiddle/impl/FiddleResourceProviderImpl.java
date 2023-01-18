@@ -43,17 +43,38 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component(
-        service = {FiddleRefresher.class},
-        immediate = true
+        immediate = true,
+        service = FiddleRefresher.class
 )
 public class FiddleResourceProviderImpl extends ResourceProvider<Object> implements FiddleRefresher {
     private static final Logger log = LoggerFactory.getLogger(FiddleResourceProviderImpl.class);
+
+    private static final String ROOT = "/apps/acs-tools/components/aemfiddle/fiddle";
 
     @Reference
     private EventAdmin eventAdmin;
 
     private volatile ServiceRegistration resourceProviderRegistration = null;
 
+    @Activate
+    protected void activate(BundleContext context) {
+        Dictionary<String, Object> props = new Hashtable<String, Object>();
+
+        // Is >= 6.3.0, use new Resource Provider
+        props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
+        props.put(ResourceProvider.PROPERTY_ROOT, ROOT);
+        props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
+        resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
+    }
+
+    @Deactivate
+    protected void deactivate() {
+        if (resourceProviderRegistration != null) {
+            resourceProviderRegistration.unregister();
+        }
+    }
+
+    @Override
     public Resource getResource(ResolveContext ctx, String path, ResourceContext resourceContext, Resource parent) {
         final ResourceResolver resourceResolver = ctx.getResourceResolver();
         final InMemoryScript script = InMemoryScript.get();
@@ -64,6 +85,7 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
         return null;
     }
 
+    @Override
     public Iterator<Resource> listChildren(ResolveContext ctx, Resource parent) {
         if (parent.getPath().equals(Constants.PSEDUO_COMPONENT_PATH)) {
             InMemoryScript script = InMemoryScript.get();
@@ -75,11 +97,11 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
         return null;
     }
 
+    @Override
     public void refresh(String path) {
-        // Only execute for non-legacy RP's
         if (getProviderContext() != null) {
-            final List<ResourceChange> resourceChangeList = new ArrayList<>();
-            final ResourceChange resourceChange = new ResourceChange(
+            List<ResourceChange> resourceChangeList = new ArrayList<>();
+            ResourceChange resourceChange = new ResourceChange(
                     ResourceChange.ChangeType.CHANGED,
                     path,
                     false
@@ -92,22 +114,5 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
         }
     }
 
-    @Activate
-    protected void activate(final BundleContext context) {
-        final Dictionary<String, Object> props = new Hashtable<>();
-
-        props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
-        props.put(ResourceProvider.PROPERTY_ROOT, Constants.PSEDUO_COMPONENT_PATH);
-        props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
-        resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
-
-    }
-
-    @Deactivate
-    protected void deactivate(final BundleContext context) {
-        if (resourceProviderRegistration != null) {
-            resourceProviderRegistration.unregister();
-        }
-    }
 
 }

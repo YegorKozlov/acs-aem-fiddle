@@ -23,27 +23,17 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import static org.apache.sling.api.servlets.HttpConstants.METHOD_POST;
 
@@ -53,21 +43,8 @@ import static org.apache.sling.api.servlets.HttpConstants.METHOD_POST;
         "sling.servlet.selectors=" + "run",
         "sling.servlet.extensions=" + "html",
 })
-@SuppressWarnings({"serial", "findsecbugs:PATH_TRAVERSAL_IN", "CQRules:CQBP-71"})
 public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
-
-    private static final String VAR_CLASSES = "/var/classes";
-
-    private static final String COMPILED_JSP = "org/apache/jsp/apps/acs_002dtools/components/aemfiddle";
-
-    private static final String[] COMPILED_JSP_FILES = new String[]{
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.class",
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.deps",
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.java"
-    };
-
-    private File fileRoot;
 
     @Reference
     private transient FiddleRefresher fiddleRefresher;
@@ -76,37 +53,27 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
-        // Clear any previously compiled fiddle scripts as they have a tendency to execute on first executions
-        this.clearCompiledFiddle(request.getResourceResolver());
+        Resource resource = getResource(request);
 
-
-        final Resource resource = getResource(request);
-
-        final String data = request.getParameter("scriptdata");
-        final String ext = request.getParameter("scriptext");
+        String data = request.getParameter("scriptdata");
+        String ext = request.getParameter("scriptext");
 
         InMemoryScript script = InMemoryScript.set(ext, data);
-
-        // doing this as a synchronous event so we ensure that
-        // the JSP has been invalidated
-        fiddleRefresher.refresh(script.getPath());
-
-        final RequestDispatcherOptions options = new RequestDispatcherOptions();
-        options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
-        options.setReplaceSelectors("");
-
-        // Suppress ACS AEM Commons - Component Error Handler from capturing errors
-        request.setAttribute("com.adobe.acs.commons.wcm.component-error-handler.suppress", true);
-
         try {
-            request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.aem-fiddle");
-        } catch (RepositoryException e) {
-            log.warn("Unable to set [ user-event-data = acs-aem-tools.aem-fiddle ] for fiddle execution.", e);
-        }
+            // doing this as a synchronous event so we ensure that
+            // the JSP has been invalidated
+            fiddleRefresher.refresh(script.getPath());
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
-        GetRequest getRequest = new GetRequest(request);
-        dispatcher.forward(getRequest, response);
+            RequestDispatcherOptions options = new RequestDispatcherOptions();
+            options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
+            options.setReplaceSelectors("");
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
+            GetRequest getRequest = new GetRequest(request);
+            dispatcher.forward(getRequest, response);
+        } finally {
+            InMemoryScript.clear();
+        }
     }
 
     private Resource getResource(SlingHttpServletRequest request) {
@@ -119,51 +86,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         }
     }
 
-
-    private void clearCompiledFiddle(final ResourceResolver resourceResolver) {
-        final Resource varClasses = resourceResolver.getResource(VAR_CLASSES);
-
-        if (varClasses != null) {
-            /* AEM 5.6.x does not have the /var/classes/UUID */
-            this.removeResource(varClasses.getChild(COMPILED_JSP));
-
-            /* /var/classes structure builds out under a UUID that is different between AEM6 instances */
-            final Iterator<Resource> iterator = varClasses.listChildren();
-
-            while (iterator.hasNext()) {
-                final Resource varClass = iterator.next();
-                this.removeResource(varClass.getChild(COMPILED_JSP));
-            }
-        }
-
-        if (this.fileRoot != null) {
-            // AEM 6.1+
-            for (String fileName : COMPILED_JSP_FILES) {
-                File file = new File(fileRoot, fileName);
-                if (file.exists()) {
-                    boolean status = file.delete();
-                    log.debug("delete: {} {}", status, file.getPath());
-                }
-            }
-        }
-    }
-
-    private void removeResource(final Resource resource) {
-        if (resource != null) {
-            final Node node = resource.adaptTo(Node.class);
-
-            if (node != null) {
-                try {
-                    log.trace("Removing AEM Fiddle compiled scripts at: {}", node.getPath());
-                    node.remove();
-                    node.getSession().save();
-                } catch (RepositoryException e) {
-                    log.error("Could not remove compiled AEM Fiddle scripts", e);
-                }
-            }
-        }
-    }
-
     private static class GetRequest extends SlingHttpServletRequestWrapper {
 
         public GetRequest(SlingHttpServletRequest wrappedRequest) {
@@ -173,19 +95,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         @Override
         public String getMethod() {
             return "GET";
-        }
-    }
-
-    @Activate
-    protected void activate(ComponentContext ctx) {
-        BundleContext bundleContext = ctx.getBundleContext();
-
-        // this is less than ideal, but there's no better way to get to the fs classloader's data directory
-        for (Bundle bundle : bundleContext.getBundles()) {
-            if (bundle.getSymbolicName().equals("org.apache.sling.commons.fsclassloader")) {
-                this.fileRoot = bundle.getDataFile("classes");
-                break;
-            }
         }
     }
 }

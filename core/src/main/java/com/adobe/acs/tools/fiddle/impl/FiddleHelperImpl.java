@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
-import static org.apache.jackrabbit.JcrConstants.JCR_DATA;
 
 @Component
 public class FiddleHelperImpl implements FiddleHelper {
@@ -43,11 +41,7 @@ public class FiddleHelperImpl implements FiddleHelper {
     public String getCodeTemplate(final Resource resource) {
         try {
             return getNTFileAsString(resource);
-        } catch (RepositoryException ex) {
-            log.error("Unable to get the AEM Fiddle code template from resource [ {} ] due to: {}",
-                    resource.getPath(), ex);
-            return "";
-        } catch (IOException ex) {
+        } catch (RepositoryException | IOException ex) {
             log.error("Unable to get the AEM Fiddle code template from resource [ {} ] due to: {}",
                     resource.getPath(), ex);
             return "";
@@ -56,8 +50,8 @@ public class FiddleHelperImpl implements FiddleHelper {
 
     public static InputStream getNTFileAsInputStream(Resource resource) throws RepositoryException {
         Node node = resource.adaptTo(Node.class);
-        Node jcrContent = node.getNode(JCR_CONTENT);
-        return jcrContent.getProperty(JCR_DATA).getBinary().getStream();
+        Node jcrContent = node.getNode("jcr:content");
+        return jcrContent.getProperty("jcr:data").getBinary().getStream();
     }
 
     public static String getNTFileAsString(Resource resource) throws RepositoryException, IOException {

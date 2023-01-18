@@ -29,32 +29,20 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
 public class InMemoryScript {
 
-    private static final Charset charset = Charset.forName("UTF-8");
+    private final static ThreadLocal<InMemoryScript> holder = new ThreadLocal<>();
 
-    private static ThreadLocal<InMemoryScript> holder = new ThreadLocal<InMemoryScript>();
-
-    private final String extension;
     private final String data;
     private final String path;
 
-    public String getExtension() {
-        return extension;
-    }
-
-    public String getData() {
-        return data;
-    }
-
     private InMemoryScript(String ext, String data) {
-        this.extension = ext;
         this.data = data;
-        this.path = Constants.SCRIPT_PATH + "." + extension;
+        this.path = Constants.SCRIPT_PATH + "." + ext;
     }
 
     public static InMemoryScript set(String ext, String data) {
@@ -68,7 +56,7 @@ public class InMemoryScript {
     }
 
     public static void clear() {
-        holder.set(null);
+        holder.remove();
     }
 
     public Resource toResource(ResourceResolver resourceResolver) {
@@ -89,7 +77,7 @@ public class InMemoryScript {
         @Override
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             if (type == InputStream.class) {
-                return (AdapterType) new ByteArrayInputStream(data.getBytes(charset));
+                return (AdapterType) new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
             } else if (type == ValueMap.class) {
                 return (AdapterType) ValueMapDecorator.EMPTY;
             } else {
@@ -118,7 +106,7 @@ public class InMemoryScript {
 
         public ScriptPropertiesResource(ResourceResolver resourceResolver) {
             super(resourceResolver, path + "/" + JcrConstants.JCR_CONTENT, JcrConstants.NT_UNSTRUCTURED);
-            Map<String, Object> map = Collections.<String, Object>singletonMap(JcrConstants.JCR_ENCODING, charset.name());
+            Map<String, Object> map = Collections.singletonMap(JcrConstants.JCR_ENCODING, StandardCharsets.UTF_8);
             properties = new ValueMapDecorator(map);
         }
 
@@ -135,7 +123,7 @@ public class InMemoryScript {
 
     public class ScriptParentResource extends SyntheticResource {
 
-        private ScriptResource scriptResource;
+        private final ScriptResource scriptResource;
 
         public ScriptParentResource(ScriptResource scriptResource) {
             super(scriptResource.getResourceResolver(), Text.getAbsoluteParent(scriptResource.getPath(), 1), null);
