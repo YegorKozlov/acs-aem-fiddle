@@ -23,7 +23,8 @@ package com.adobe.acs.tools.fiddle.impl;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * This interface is used by the FiddleRunServlet to tell the Fiddle Resource Provider to emit a change event so the Fiddle Script can be purged from the internal script cache and avoid executing stale scripts.
+ * This interface is used by the FiddleRunServlet to tell the Fiddle Resource Provider to emit a change event,
+ * so the Fiddle Script can be purged from the internal script cache and avoid executing stale scripts.
  */
 @ProviderType
 public interface FiddleRefresher {

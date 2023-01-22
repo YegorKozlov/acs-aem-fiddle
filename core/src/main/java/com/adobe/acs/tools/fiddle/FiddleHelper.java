@@ -19,18 +19,35 @@
  */
 package com.adobe.acs.tools.fiddle;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Utility methods to support AEM Fiddle.
- *
  */
-public interface FiddleHelper {
+public class FiddleHelper {
+    private static final Logger log = LoggerFactory.getLogger(FiddleHelper.class);
+
     /**
      * Returns the contents of the Code Template file as a String.
      *
      * @param resource the nt:file resource whose contents is the code template
      * @return The contents of the code template as a String
      */
-    String getCodeTemplate(Resource resource);
+    public static String getCodeTemplate(final Resource resource) {
+        try {
+            InputStream inputStream = resource.adaptTo(InputStream.class);
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            log.error("Unable to get the AEM Fiddle code template from resource [ {} ] due to: {}",
+                    resource.getPath(), ex);
+            return "";
+        }
+    }
 }

@@ -1,0 +1,124 @@
+/*
+ * #%L
+ * ACS AEM Tools Package
+ * %%
+ * Copyright (C) 2014 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+#acs-tools-vlt-rcp-app {
+
+  .tasks {
+    width: 100%;
+    margin-bottom: 50px;
+    .coral-Accordion-item {
+      opacity: 1;
+    }
+    .coral-Accordion-item.ng-enter {
+      -webkit-transition: 1s;
+      transition: 1s;
+      opacity: 0;
+    }
+    .coral-Accordion-item.ng-enter-active {
+      opacity: 1;
+    }
+    .coral-Accordion-item {
+      border: 1px #dfdfdf solid;
+      .coral-Accordion-header {
+        height: auto;
+
+        > i {
+          min-width: 18px;
+        }
+        .task-actions {
+          float: right;
+          margin-right: 0;
+          > button {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+        .coral-Accordion-title {
+          font-size: 1.125rem
+        }
+      }
+      .coral-Accordion-content {
+        .task-status, .task-settings {
+          ul {
+            list-style: none;
+            padding: 0;
+            margin-left: 1em;
+          }
+        }
+      }
+    }
+  }
+
+  .top-button-group {
+    float: right;
+  }
+}
+
+.auto-refresh-section {
+  .auto-refresh-label {
+    .auto-refresh-text {
+      margin-left: .3125rem;
+    }
+  }
+}
+
+#create-new-task-modal {
+  width: 80%;
+  position: absolute;
+  top: 0 !important; // for some reason, the CUI modal has negative top value
+  margin-top: 0 !important; // for some reason, the CUI modal has negative margin value
+  .coral-Modal-body {
+    padding-left: 6em;
+    padding-right: 6em;
+  }
+
+  input[type=text], input[type=password] {
+      width: 100%;
+  }
+  
+  .excludes {
+      width: 100%;
+      input[type=text] {
+          width: 90%;
+      }
+  }
+
+  a.removeButton, a.addButton {
+    margin-left: .5em;
+    i {
+        padding-top: .5em;
+    }
+  }
+
+  .add-remove-list {
+    ul {
+      list-style: none;
+      margin: 1em 0;
+      padding :0;
+
+      li {
+        margin: 0;
+        padding: 0 0 .5em 0;
+
+      }
+    }
+  }
+}
+

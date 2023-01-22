@@ -84,7 +84,9 @@ aemFiddle.ace = {
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ftl");                
             } else if ('groovy' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/groovy");                
-            } else if ('jsp' === scriptExt) {
+            } else if ('java' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/java");                
+            } else if ('jsp' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");                
             } else if ('jst' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ejs");                

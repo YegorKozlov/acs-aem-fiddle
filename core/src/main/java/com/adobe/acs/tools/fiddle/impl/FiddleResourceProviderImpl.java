@@ -19,6 +19,7 @@
  */
 package com.adobe.acs.tools.fiddle.impl;
 
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.observation.ResourceChange;
@@ -30,8 +31,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,9 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import static com.adobe.acs.tools.fiddle.impl.Constants.PSEDUO_COMPONENT_PATH;
 
 @Component(
         immediate = true,
@@ -49,35 +51,29 @@ import java.util.List;
 public class FiddleResourceProviderImpl extends ResourceProvider<Object> implements FiddleRefresher {
     private static final Logger log = LoggerFactory.getLogger(FiddleResourceProviderImpl.class);
 
-    private static final String ROOT = "/apps/acs-tools/components/aemfiddle/fiddle";
+    private ServiceRegistration<ResourceProvider> resourceProviderRegistration;
 
-    @Reference
-    private EventAdmin eventAdmin;
-
-    private volatile ServiceRegistration resourceProviderRegistration = null;
+    private Resource script;
 
     @Activate
     protected void activate(BundleContext context) {
-        Dictionary<String, Object> props = new Hashtable<String, Object>();
+        Dictionary<String, Object> props = new Hashtable<>();
 
-        // Is >= 6.3.0, use new Resource Provider
         props.put(ResourceProvider.PROPERTY_NAME, "acs-aem-tools.aem-fiddle");
-        props.put(ResourceProvider.PROPERTY_ROOT, ROOT);
+        props.put(ResourceProvider.PROPERTY_ROOT, PSEDUO_COMPONENT_PATH);
         props.put(ResourceProvider.PROPERTY_REFRESHABLE, true);
-        resourceProviderRegistration = context.registerService(ResourceProvider.class.getName(), this, props);
+        resourceProviderRegistration = context.registerService(ResourceProvider.class, this, props);
     }
 
     @Deactivate
     protected void deactivate() {
-        if (resourceProviderRegistration != null) {
-            resourceProviderRegistration.unregister();
-        }
+        resourceProviderRegistration.unregister();
     }
 
     @Override
     public Resource getResource(ResolveContext ctx, String path, ResourceContext resourceContext, Resource parent) {
-        final ResourceResolver resourceResolver = ctx.getResourceResolver();
-        final InMemoryScript script = InMemoryScript.get();
+        ResourceResolver resourceResolver = ctx.getResourceResolver();
+        InMemoryScript script = InMemoryScript.get();
         if (script != null && path.equals(script.getPath())) {
             return script.toResource(resourceResolver);
         }
@@ -87,7 +83,7 @@ public class FiddleResourceProviderImpl extends ResourceProvider<Object> impleme
 
     @Override
     public Iterator<Resource> listChildren(ResolveContext ctx, Resource parent) {
-        if (parent.getPath().equals(Constants.PSEDUO_COMPONENT_PATH)) {
+        if (parent.getPath().equals(PSEDUO_COMPONENT_PATH)) {
             InMemoryScript script = InMemoryScript.get();
             if (script != null) {
                 Resource scriptResource = script.toResource(parent.getResourceResolver());

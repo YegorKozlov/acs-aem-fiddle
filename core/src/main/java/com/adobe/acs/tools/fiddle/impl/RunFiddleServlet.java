@@ -47,7 +47,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 
     @Reference
-    private transient FiddleRefresher fiddleRefresher;
+    private FiddleRefresher fiddleRefresher;
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -60,7 +60,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         InMemoryScript script = InMemoryScript.set(ext, data);
         try {
-            // doing this as a synchronous event so we ensure that
+            // doing this as a synchronous event, so we ensure that
             // the JSP has been invalidated
             fiddleRefresher.refresh(script.getPath());
 
@@ -69,8 +69,12 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             options.setReplaceSelectors("");
 
             RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
-            GetRequest getRequest = new GetRequest(request);
-            dispatcher.forward(getRequest, response);
+            dispatcher.forward(new SlingHttpServletRequestWrapper(request) {
+                @Override
+                public String getMethod() {
+                    return "GET";
+                }
+            }, response);
         } finally {
             InMemoryScript.clear();
         }
@@ -86,15 +90,4 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private static class GetRequest extends SlingHttpServletRequestWrapper {
-
-        public GetRequest(SlingHttpServletRequest wrappedRequest) {
-            super(wrappedRequest);
-        }
-
-        @Override
-        public String getMethod() {
-            return "GET";
-        }
-    }
 }
