@@ -1,7 +1,0 @@
-{
-    "scripts": [
-        "create path (sling:OrderedFolder) /content/dam/fleetcortechnologiesoperatingcompanyllcprogram3",
-        "create path (nt:unstructured) /content/dam/fleetcortechnologiesoperatingcompanyllcprogram3/jcr:content",
-        "set properties on /content/dam/fleetcortechnologiesoperatingcompanyllcprogram3/jcr:content\n  set cq:conf{String} to /conf/fleetcortechnologiesoperatingcompanyllcprogram3\n  set jcr:title{String} to \"fleetcortechnologiesoperatingcompanyllcprogram3\"\nend"
-    ]
-}

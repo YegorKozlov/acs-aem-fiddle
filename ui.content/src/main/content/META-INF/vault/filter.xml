@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<workspaceFilter version="1.0">
-    <filter root="/conf/fleetcortechnologiesoperatingcompanyllcprogram3" mode="merge"/>
-    <filter root="/content/fleetcortechnologiesoperatingcompanyllcprogram3" mode="merge"/>
-    <filter root="/content/dam/fleetcortechnologiesoperatingcompanyllcprogram3/asset.jpg" mode="merge"/>
-    <filter root="/content/experience-fragments/fleetcortechnologiesoperatingcompanyllcprogram3" mode="merge"/>
-</workspaceFilter>

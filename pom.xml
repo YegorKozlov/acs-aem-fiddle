@@ -16,24 +16,17 @@
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fleetcortechnologiesoperatingcompanyllcprogram3</groupId>
-    <artifactId>aem-fleetcortechnologiesoperatingcompanyllcprogram3-project</artifactId>
+    <groupId>com.fleetcor-aemcloud-sandbox</groupId>
+    <artifactId>aem-fleetcor-aemcloud-sandbox-project</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>fleetcortechnologiesoperatingcompanyllcprogram3</name>
-    <description>fleetcortechnologiesoperatingcompanyllcprogram3</description>
+    <name>fleetcor-aemcloud-sandbox</name>
+    <description>fleetcor-aemcloud-sandbox</description>
 
     <modules>
         <module>all</module>
         <module>core</module>
-        <module>ui.frontend</module>
-         <module>ui.apps</module>
-        <module>ui.apps.structure</module>
-        <module>ui.config</module>
-        <module>ui.content</module>
-        <module>it.tests</module>
-        <module>dispatcher</module>
-        <module>ui.tests</module>
+        <module>ui.apps</module>
   </modules>
 
     <properties>
@@ -53,7 +46,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <aem.sdk.api>2022.12.10488.20221222T085327Z-220900</aem.sdk.api>
         <aemanalyser.version>1.4.10</aemanalyser.version>
-        <componentGroupName>fleetcortechnologiesoperatingcompanyllcprogram3</componentGroupName>
+        <componentGroupName>fleetcor-aemcloud-sandbox</componentGroupName>
     </properties>
 
     <build>

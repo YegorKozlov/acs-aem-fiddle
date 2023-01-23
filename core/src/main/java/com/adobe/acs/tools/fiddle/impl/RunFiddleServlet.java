@@ -47,7 +47,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 
     @Reference
-    private FiddleRefresher fiddleRefresher;
+    private transient FiddleRefresher fiddleRefresher;
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)

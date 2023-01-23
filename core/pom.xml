@@ -18,14 +18,14 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.fleetcortechnologiesoperatingcompanyllcprogram3</groupId>
-        <artifactId>aem-fleetcortechnologiesoperatingcompanyllcprogram3-project</artifactId>
+        <groupId>com.fleetcor-aemcloud-sandbox</groupId>
+        <artifactId>aem-fleetcor-aemcloud-sandbox-project</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>aem-fleetcortechnologiesoperatingcompanyllcprogram3-project.core</artifactId>
-    <name>fleetcortechnologiesoperatingcompanyllcprogram3 - Core</name>
-    <description>Core bundle for fleetcortechnologiesoperatingcompanyllcprogram3</description>
+    <artifactId>aem-fleetcor-aemcloud-sandbox-project.core</artifactId>
+    <name>fleetcor-aemcloud-sandbox - Core</name>
+    <description>Core bundle for fleetcor-aemcloud-sandbox</description>
     <build>
         <plugins>
             <plugin>
