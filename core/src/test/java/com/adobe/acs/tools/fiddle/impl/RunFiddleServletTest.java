@@ -24,13 +24,13 @@ class RunFiddleServletTest {
     private RequestDispatcher requestDispatcher;
 
     @Test
-    void doGet(AemContext context) throws ServletException, IOException {
+    void doPost(AemContext context) throws ServletException, IOException {
         context.registerInjectActivateService(new FiddleResourceProviderImpl());
         RunFiddleServlet fixture = context.registerInjectActivateService(new RunFiddleServlet());
-        ;
-
 
         MockSlingHttpServletRequest request = context.request();
+        request.addRequestParameter("scriptdata", "out.println(true);");
+        request.addRequestParameter("scriptext", "jsp");
 
         request.setRequestDispatcherFactory(new MockRequestDispatcherFactory() {
             @Override

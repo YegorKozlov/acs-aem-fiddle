@@ -15,6 +15,5 @@
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <workspaceFilter version="1.0">
-    <filter root="/apps/fleetcor-aemcloud-sandbox-packages"/>
-    <filter root="/apps/fleetcor-aemcloud-sandbox-vendor-packages"/>
+    <filter root="/apps/acs-tools-packages"/>
 </workspaceFilter>
