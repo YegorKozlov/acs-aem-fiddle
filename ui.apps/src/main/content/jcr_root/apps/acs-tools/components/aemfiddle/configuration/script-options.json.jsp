@@ -29,28 +29,16 @@
   final JSONArray jsonArray = new JSONArray();
 
   for(final ScriptEngineFactory scriptEngineFactory : scriptEngineManager.getEngineFactories()) {
-        final List<String> extensions = scriptEngineFactory.getExtensions();
+        List<String> extensions = scriptEngineFactory.getExtensions();
         if (extensions.isEmpty()) {
           continue;
         }
-        final String languageName = scriptEngineFactory.getLanguageName();
+        String languageName = scriptEngineFactory.getLanguageName();
 
-        if (extensions.contains("ecma") && extensions.contains("esp")) {
-            final JSONObject obj1 = new JSONObject();
-            obj1.put("label", languageName);
-            obj1.put("value", "ecma");
-            jsonArray.put(obj1);
-
-            final JSONObject obj2 = new JSONObject();
-            obj2.put("label", "ESP");
-            obj2.put("value", "esp");
-            jsonArray.put(obj2);
-        } else {
-            final JSONObject obj = new JSONObject();
-            obj.put("label", languageName);
-            obj.put("value", extensions.get(0));
-            jsonArray.put(obj);
-        }
+        JSONObject obj = new JSONObject();
+        obj.put("label", languageName);
+        obj.put("value", extensions.get(0));
+        jsonArray.put(obj);
   } 
 %><%
 %><%= jsonArray.toString() %>

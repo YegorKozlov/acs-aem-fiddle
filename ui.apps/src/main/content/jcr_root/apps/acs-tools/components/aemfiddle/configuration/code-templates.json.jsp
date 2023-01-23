@@ -49,34 +49,16 @@ for(final String extension : extensions) {
 	if(templates == null) { continue; }
 
 	for(final Resource template : templates.getChildren()) {
-		final JSONObject obj = new JSONObject();	
+		JSONObject obj = new JSONObject();
 		
 		obj.put("title", template.getName());
 		obj.put("scriptData", fiddleHelper.getCodeTemplate(template));
-		obj.put("scriptExt", extension);
-
-		// Check if this language has a defined default template
-		if(template.getName().startsWith(DEFAULT_TEMPLATE_NAME + ".")) { 
-			hasDefault = true; 
-			obj.put("default", true);
-		} else {
-			obj.put("default", false);
-		}
-
-		jsonArray.put(obj);
-	}
-
-	// If no default template has been defined, create one as blank
-	if(!hasDefault) {
-		final JSONObject obj = new JSONObject();	
-
-		obj.put("title", DEFAULT_TEMPLATE_NAME);
-		obj.put("scriptData", "");
 		obj.put("scriptExt", extension);
 		obj.put("default", true);
 
 		jsonArray.put(obj);
 	}
+
 }
 %><%
 %><%= jsonArray.toString() %>

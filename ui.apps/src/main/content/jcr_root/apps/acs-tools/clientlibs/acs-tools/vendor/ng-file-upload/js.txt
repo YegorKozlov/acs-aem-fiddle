@@ -1,4 +1,0 @@
-#base=.
-
-FileAPI.min.js
-ng-file-upload-all.min.js

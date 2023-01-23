@@ -38,7 +38,7 @@
     final String currentPagePath = resourceResolver.map(slingRequest, currentPage.getPath());
 
     /* ACE JS Base path */
-    final String aceBasePath = resourceResolver.map(slingRequest, "/apps/acs-tools/acs-tool/vendor/aceeditor");
+    final String aceBasePath = resourceResolver.map(slingRequest, "/apps/acs-tools/clientlibs/aceeditor");
 
     /* Favicon */
     final String faviconPath = resourceResolver.map(slingRequest, component.getPath() + "/clientlibs/images/favicon.png");
