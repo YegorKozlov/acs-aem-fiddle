@@ -137,12 +137,6 @@ aemFiddle.ace = {
     }
 };
 
-ace.config.set("basePath", '/apps/acs-tools/clientlibs/aceeditor');
-//ace.config.set("basePath", $('#app-data').data('ace-editor-base-path'));
-
-aemFiddle.ace.input.init();
-aemFiddle.ace.output.init();
-
 window.onbeforeunload = function () {
     return "Leaving this page will cause you to lose any unsaved code you've entered.";
 };

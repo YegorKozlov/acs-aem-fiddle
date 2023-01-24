@@ -490,6 +490,10 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     /* App Initialization */
 
     var init = function () {
+        ace.config.set("basePath", $('#app-data').data('ace-editor-base-path'));
+        aemFiddle.ace.input.init();
+        aemFiddle.ace.output.init();
+
         $scope.myfiddles.list($scope.data.app.myFiddlesPath);
         /* Store initial input src for use during reset */
 
